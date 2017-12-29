@@ -23,10 +23,11 @@ duration=20
 def populateVideoParameters(dooldleLang,doodleObject):
     videoDetails = argparse.Namespace()
     videoDetails.file=dooldleLang.get_doodle_videoLocation()
-    videoDetails.title=dooldleLang.get_doodle_query()
-    videoDetails.description=dooldleLang.get_doodle_hoverText()
+    videoDetails.title=dooldleLang.get_doodle_query()+ " Google Doodle"
+    videoDetails.description="Google Doodle :\n"+ dooldleLang.get_doodle_hoverText()+"\n" +dooldleLang.get_doodle_query() +"\n" +doodleObject.get_doodle_title()+"\n" +doodleObject.get_doodle_name()
     videoDetails.category="27"
-    videoDetails.keywords=dooldleLang.get_doodle_query()
+    keywords=[doodleObject.get_doodle_title(),doodleObject.get_doodle_name(),dooldleLang.get_doodle_query(),dooldleLang.get_doodle_hoverText()]
+    videoDetails.keywords=",".join(keywords)
     videoDetails.privacyStatus="public"
     videoDetails.logging_level="WARNING"
     videoDetails.noauth_local_webserver=True
@@ -52,7 +53,7 @@ def createDoodleVideo(doodleObject):
     sys.setdefaultencoding('UTF8')
     print "creating video for "+doodleObject.get_doodle_title()
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
-        if dooldleLang.get_doodle_hoverText() is not None:  
+        if dooldleLang.get_doodle_hoverText() is not None :  
             textCollection=[]    
             print dooldleLang.get_doodle_hoverText()
             background_image_clip = ImageClip(background_image)
@@ -61,7 +62,7 @@ def createDoodleVideo(doodleObject):
             txt_word_header = TextClip("Google Doodle ",color='white',font='arial',method='label',size=(wordWidth,50))
             txt_word_header = txt_word_header.set_pos(('center',60)).set_duration(duration)
             textCollection.append(txt_word_header)
-            doodle_clip = ImageClip(doodleObject.get_doodle_image_jpeg())
+            doodle_clip = VideoFileClip(doodleObject.get_doodle_image_jpeg())
             doodle_clip = doodle_clip.resize(resize_func).set_pos(('center',114)).set_duration(duration)
             textCollection.append(doodle_clip)
             txt_word = TextClip(dooldleLang.get_doodle_hoverText(),color='white',font='Arial-Unicode-MS',method='label',size=(wordWidth,wordHeight),print_cmd=True)

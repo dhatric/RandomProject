@@ -16,8 +16,8 @@ def populateDoodleHeaders(dooldleObject, doodleJson):
     dooldleObject.set_doodle_name(doodleJson['name'])
     dooldleObject.set_doodle_query(doodleJson['query'])
     
-    absoluteJpegPath=output_image_directory+doodleJson['name']+".jpeg"
-    absolutePngPath=output_image_directory+doodleJson['name']+".png"
+    absoluteJpegPath=output_image_directory+doodleJson['name']+doodleJson['hires_url'][-4:]
+    absolutePngPath=output_image_directory+doodleJson['name']+doodleJson['url'][-4:]
     
     requestJpeg = requests.get("https://"+doodleJson['hires_url'][2:])
     if requestJpeg.status_code == 200:
