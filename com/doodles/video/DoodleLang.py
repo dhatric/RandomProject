@@ -18,4 +18,8 @@ class DoodleLang(object):
  def set_doodle_hoverText(self,value):
     self.hoverText=value
  
+ def get_doodle_videoLocation(self):
+     return self.videoLocation
  
+ def set_doodle_videoLocation(self,value):
+    self.videoLocation=value

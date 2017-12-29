@@ -5,6 +5,8 @@ from Doodle import Doodle
 from DoodleLang import DoodleLang
 import sys
 from moviepy.editor import *
+import argparse
+import UploadDoodle
 
 width=1400
 height=width*9/16
@@ -13,10 +15,24 @@ wordWidth=width-40
 wordHeight=height/5
 
 output_video_directory='../output/videos/'
-audio_background='../audios/backgroundAudio.mp3'
+audio_background='../audios/Sleepy_Jake.mp3'
 background_image='../background.jpg'
 
 duration=20
+
+def populateVideoParameters(dooldleLang,doodleObject):
+    videoDetails = argparse.Namespace()
+    videoDetails.file=dooldleLang.get_doodle_videoLocation()
+    videoDetails.title=dooldleLang.get_doodle_query()
+    videoDetails.description=dooldleLang.get_doodle_hoverText()
+    videoDetails.category="27"
+    videoDetails.keywords=dooldleLang.get_doodle_query()
+    videoDetails.privacyStatus="public"
+    videoDetails.logging_level="WARNING"
+    videoDetails.noauth_local_webserver=True
+    videoDetails.still_id=1
+    return videoDetails
+
 
 def resize_func(t):
     zoom=0
@@ -36,7 +52,7 @@ def createDoodleVideo(doodleObject):
     sys.setdefaultencoding('UTF8')
     print "creating video for "+doodleObject.get_doodle_title()
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
-        if dooldleLang.get_doodle_hoverText() is not None and dooldleLang.get_doodle_lang() == 'en':  
+        if dooldleLang.get_doodle_hoverText() is not None:  
             textCollection=[]    
             print dooldleLang.get_doodle_hoverText()
             background_image_clip = ImageClip(background_image)
@@ -53,9 +69,12 @@ def createDoodleVideo(doodleObject):
             textCollection.append(txt_word)
             video = CompositeVideoClip(textCollection,size=screensize)
             absoluteVideoFile=output_video_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".mp4"
+            dooldleLang.set_doodle_videoLocation(absoluteVideoFile)
             audio_backgroundClip=AudioFileClip(audio_background)
             video=video.set_audio(audio_backgroundClip.set_duration(duration))
-            video.write_videofile(absoluteVideoFile,fps=24,codec="mpeg4") 
+            video.write_videofile(absoluteVideoFile,fps=24,codec="mpeg4")
+            videoDetails=populateVideoParameters(dooldleLang,doodleObject)
+            UploadDoodle.uploadToYoutube(videoDetails,dooldleLang,doodleObject)
 
     
     
