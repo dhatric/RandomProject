@@ -44,7 +44,7 @@ def getDoodleFromGoogle():
     PARAMS = {'hl':'en_GB'}
     request = requests.get(url = URL, params = PARAMS)
     data = request.json()
-    doodleJson=data[0]
+    doodleJson=data[9]
     populateDoodleHeaders(dooldleObject, doodleJson)
     populateDoodleLangs(dooleLangObjects, doodleJson)
     dooldleObject.set_doodle_dooleLangs(dooleLangObjects)

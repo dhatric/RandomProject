@@ -12,7 +12,7 @@ import UploadDoodle
 
 output_video_directory='../output/videos/'
 audio_background='../audios/Sleepy_Jake.mp3'
-background_image='../background.jpg'
+background_image='../background.gif'
 
 duration=20
 
@@ -59,6 +59,10 @@ def createDoodleVideo(doodleObject):
         if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1 and  dooldleLang.get_doodle_lang() == 'en':  
             textCollection=[]    
             print dooldleLang.get_doodle_hoverText()
+            background_image_clip = VideoFileClip(background_image)
+            for i in range(int(duration/background_image_clip.duration)):
+                textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration))
+            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(duration-1).set_end(duration))    
             txt_word_header = TextClip("Google Doodle Celebrates",color='black',font='arial',method='label',size=(wordWidth,50))
             txt_word_header = txt_word_header.set_pos(('center',60)).set_duration(duration)
             textCollection.append(txt_word_header)
