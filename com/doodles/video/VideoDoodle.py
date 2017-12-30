@@ -49,6 +49,7 @@ def createDoodleVideo(doodleObject):
     sys.setdefaultencoding('UTF8')
     width=doodleObject.get_doodle_width()
     height=width*9/16
+    #height=doodleObject.get_doodle_height()+100
     screensize = (width,height)
     wordWidth=width-40
     wordHeight=height/6
@@ -68,7 +69,7 @@ def createDoodleVideo(doodleObject):
             doodle_clip = doodle_clip.resize(resize_func).set_pos(('center',114)).set_duration(duration)
             textCollection.append(doodle_clip)
             txt_word = TextClip(dooldleLang.get_doodle_hoverText(),color='black',font='Arial-Unicode-MS',method='label',size=(wordWidth,wordHeight),print_cmd=True)
-            txt_word = txt_word.set_pos(('center',height-100)).set_duration(duration)
+            txt_word = txt_word.set_pos(('center',height-110)).set_duration(duration)
             textCollection.append(txt_word)
             video = CompositeVideoClip(textCollection,size=screensize,bg_color=(255,255,255))
             absoluteVideoFile=output_video_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".mp4"

@@ -19,27 +19,18 @@ def populateDoodleHeaders(dooldleObject, doodleJson):
     dooldleObject.set_doodle_height(doodleJson['hires_height'])
     absoluteJpegPath=output_image_directory+doodleJson['name']+doodleJson['hires_url'][-4:]
     absolutePngPath=output_image_directory+doodleJson['name']+doodleJson['url'][-4:]
-    
+    print "https://"+doodleJson['hires_url'][2:]
     requestJpeg = requests.get("https://"+doodleJson['hires_url'][2:])
     if requestJpeg.status_code == 200:
         with open(absoluteJpegPath, 'wb') as f:
             for chunk in requestJpeg:
                 f.write(chunk)
     dooldleObject.set_doodle_image_jpeg(absoluteJpegPath)
-    
-    requestPng = requests.get("https://"+doodleJson['url'][2:])
-    if requestPng.status_code == 200:
-        with open(absolutePngPath, 'wb') as f:
-            for chunk in requestPng:
-                f.write(chunk)
-
-    dooldleObject.set_doodle_image_png(absolutePngPath)
 
 
 def populateDoodleLangs(dooleLangObjects, doodleJson):
     translations = doodleJson['translations']                            
     for lang in translations:
-            print lang
             doodleLang = DoodleLang()
             doodleLang.set_doodle_lang(lang)
             doodleLang.set_doodle_query(translations[lang]['query'])
