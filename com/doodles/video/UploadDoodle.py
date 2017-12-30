@@ -141,7 +141,7 @@ def uploadToYoutube(videoDetails,dooldleLang,doodleObject):
   youtube = get_authenticated_service(videoDetails)
   try:
     videoId=video_upload(youtube, videoDetails)
-    thumbnails_upload(youtube,doodleObject.get_doodle_image_jpeg(),videoId=videoId)
+    #thumbnails_upload(youtube,doodleObject.get_doodle_image_jpeg(),videoId=videoId)
   except HttpError, e:
     print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
     if e.resp.status == 400:

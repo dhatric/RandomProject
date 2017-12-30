@@ -39,4 +39,16 @@ class Doodle:
  def set_doodle_dooleLangs(self,value):
       self.dooleLangs=value
  
+ def get_doodle_width(self):
+     return self.width
+ 
+ def set_doodle_width(self,value):
+     self.width=value
+     
+ def get_doodle_height(self):
+     return self.height
+ 
+ def set_doodle_height(self,value):
+     self.height=value     
+     
           

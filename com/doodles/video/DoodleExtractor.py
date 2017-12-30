@@ -15,7 +15,8 @@ def populateDoodleHeaders(dooldleObject, doodleJson):
     dooldleObject.set_doodle_title(doodleJson['title'])
     dooldleObject.set_doodle_name(doodleJson['name'])
     dooldleObject.set_doodle_query(doodleJson['query'])
-    
+    dooldleObject.set_doodle_width(doodleJson['hires_width'])
+    dooldleObject.set_doodle_height(doodleJson['hires_height'])
     absoluteJpegPath=output_image_directory+doodleJson['name']+doodleJson['hires_url'][-4:]
     absolutePngPath=output_image_directory+doodleJson['name']+doodleJson['url'][-4:]
     
@@ -36,13 +37,14 @@ def populateDoodleHeaders(dooldleObject, doodleJson):
 
 
 def populateDoodleLangs(dooleLangObjects, doodleJson):
-    translations = doodleJson['translations']
+    translations = doodleJson['translations']                            
     for lang in translations:
-        doodleLang = DoodleLang()
-        doodleLang.set_doodle_lang(lang)
-        doodleLang.set_doodle_query(translations[lang]['query'])
-        doodleLang.set_doodle_hoverText(translations[lang]['hover_text'])
-        dooleLangObjects.append(doodleLang)
+            print lang
+            doodleLang = DoodleLang()
+            doodleLang.set_doodle_lang(lang)
+            doodleLang.set_doodle_query(translations[lang]['query'])
+            doodleLang.set_doodle_hoverText(translations[lang]['hover_text'])
+            dooleLangObjects.append(doodleLang)
 
 def getDoodleFromGoogle():
     dooldleObject=Doodle()
