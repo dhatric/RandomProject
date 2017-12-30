@@ -86,5 +86,27 @@ def createDoodleVideo(doodleObject):
 
     
     
-    
-    
+def createDoodleVideoContent(doodleObject):
+    statements=['Kuppali Venkatappa Puttappa (29 December 1904 – 11 November 1994),[2] popularly known by his pen name Kuvempu, was an Indian novelist, poet, playwright, critic and thinker']
+    statements.append('He is widely regarded as the greatest Kannada poet of the 20th century. He is the first among Kannada writers to be decorated with the prestigious Jnanpith Award.')
+    statements.append('Kuvempu studied at Mysore University in the 1920s, taught there for nearly three decades and served as its vice-chancellor from 1956 to 1960.')
+    width=doodleObject.get_doodle_width()
+    height=width*9/16
+    screensize = (width,height)
+    each_text_duration=6
+    duration=len(statements)*each_text_duration
+    textCollection=[]  
+    background_image_clip = VideoFileClip(background_image)
+    for i in range(int(duration/background_image_clip.duration)):
+        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration))
+    textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(duration-1).set_end(duration))
+    start=0
+    end=each_text_duration
+    for statement in statements:
+            txt_usage_word = TextClip("<span size='40000' font='Gadugi' foreground='black' >"+statement+"</span>",method='pango',size=(width-80,400))
+            txt_usage_word = txt_usage_word.set_pos(('center','center')).set_start(start).set_end(end)
+            start=start+each_text_duration
+            end=end+each_text_duration          
+            textCollection.append(txt_usage_word)
+    video = CompositeVideoClip(textCollection,size=screensize,bg_color=(255,255,255))
+    video.write_videofile("hello.mp4",fps=24)             
