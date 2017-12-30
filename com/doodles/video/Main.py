@@ -3,8 +3,8 @@ import VideoDoodle
 
 if __name__ == '__main__':
     doodleObject = DoodleExtractor.getDoodleFromGoogle()
-    #VideoDoodle.createDoodleVideo(doodleObject)
-    VideoDoodle.createDoodleVideoContent(doodleObject)
+    VideoDoodle.createDoodleVideo(doodleObject)
+    #VideoDoodle.createDoodleVideoContent(doodleObject)
     #print doodleObject.get_doodle_title()
     #print doodleObject.get_doodle_name()
     #print doodleObject.get_doodle_query()
