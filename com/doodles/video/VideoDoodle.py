@@ -57,14 +57,18 @@ def createDoodleVideo(doodleObject):
     wordHeight=height/6
     input = raw_input("Shall I proceed ")
     print "creating video for "+doodleObject.get_doodle_title()
+    
+    contentCollection=[]
+    contentCollection=createDoodleVideoContent(doodleObject,mainDoodleDuration)
+    
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
         if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1 and  dooldleLang.get_doodle_lang() == 'en':  
             textCollection=[]    
             print dooldleLang.get_doodle_hoverText()
             background_image_clip = VideoFileClip(background_image)
             for i in range(int(mainDoodleDuration/background_image_clip.duration)):
-                textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration))
-            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration-1))    
+                textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration).resize(1.2))
+            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration-1).resize(1.2))    
             txt_word_header = TextClip("Google Doodle Celebrates",color='black',font='arial',method='label',size=(wordWidth,50))
             txt_word_header = txt_word_header.set_pos(('center',60)).set_duration(mainDoodleDuration)
             textCollection.append(txt_word_header)
@@ -77,9 +81,8 @@ def createDoodleVideo(doodleObject):
             txt_word = TextClip(dooldleLang.get_doodle_hoverText(),color='black',font='Arial-Unicode-MS',method='label',size=(wordWidth,wordHeight),print_cmd=True)
             txt_word = txt_word.set_pos(('center',height-110)).set_duration(mainDoodleDuration)
             textCollection.append(txt_word)
-            contentCollection=createDoodleVideoContent(doodleObject,mainDoodleDuration)
-            textCollection.extend(contentCollection)
-            #(contentCollection[-1]).get_end()
+            if len(contentCollection) >0 :
+                textCollection.extend(contentCollection)
             totalvideoDuration= contentCollection[-1].end
             video = CompositeVideoClip(textCollection,size=screensize,bg_color=(255,255,255))
             absoluteVideoFile=output_video_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".mp4"
@@ -102,12 +105,12 @@ def createDoodleVideoContent(doodleObject,mainDoodleDuration):
     textCollection=[]  
     background_image_clip = VideoFileClip(background_image)
     for i in range(int(contentDuration/background_image_clip.duration)):
-        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+(i*background_image_clip.duration)))
-    textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-1).set_end(mainDoodleDuration+contentDuration))
+        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+(i*background_image_clip.duration)).resize(1.2))
+    textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-1).set_end(mainDoodleDuration+contentDuration).resize(1.2))
     start=mainDoodleDuration
     end=mainDoodleDuration+each_text_duration
     for statement in statements:
-            txt_usage_word = TextClip("<span size='40000' font='Gadugi' foreground='black' >"+statement+"</span>",method='pango',size=(width-80,400))
+            txt_usage_word = TextClip("<span size='40000' font='Calibri-Bold' foreground='black' >"+statement+"</span>",method='pango',size=(width-80,400))
             txt_usage_word = txt_usage_word.set_pos(('center','center')).set_start(start).set_end(end)
             start=start+each_text_duration
             end=end+each_text_duration          
