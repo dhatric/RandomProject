@@ -4,6 +4,8 @@
 import sys
 import requests
 import smtplib
+import hashlib
+import Main
 
 previos_query=u"Virginia Woolf’s 136th birthday"
 GMAIL_USERNAME='vignanstudent@gmail.com'
@@ -29,7 +31,13 @@ if __name__ == '__main__':
     request = requests.get(url = URL, params = PARAMS)
     data = request.json()
     doodleJson=data[0]
-    print doodleJson['query']
-    if doodleJson['query'] != previos_query:
+    file_read = open("LastSuccess.txt", "r") 
+    file_content = hashlib.md5(file_read.read()).hexdigest()
+    file_read.close()
+    doole_content= hashlib.md5(doodleJson['name']).hexdigest()
+    if doole_content != file_content:
         print "change found"
-        SendMail("hello change found")
+        SendMail(doodleJson['name'])
+        Main.autoPlayDoodle()
+        
+        

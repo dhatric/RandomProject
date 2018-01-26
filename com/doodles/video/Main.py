@@ -1,18 +1,15 @@
 import DoodleExtractor
 import VideoDoodle
 
-if __name__ == '__main__':
-    doodleObject = DoodleExtractor.getDoodleFromGoogle()
-    VideoDoodle.createDoodleVideo(doodleObject)
-    #VideoDoodle.createDoodleVideoContent(doodleObject)
-    #print doodleObject.get_doodle_title()
-    #print doodleObject.get_doodle_name()
-    #print doodleObject.get_doodle_query()
-    #print doodleObject.get_doodle_image_png()
-    #print doodleObject.get_doodle_image_jpeg()
-    #for dooldleLang in doodleObject.get_doodle_dooleLangs():
-         #print dooldleLang.get_doodle_lang()
-         #print dooldleLang.get_doodle_query()
-         #print dooldleLang.get_doodle_hoverText()
 
-        
+def autoPlayDoodle():
+    doodleObject = DoodleExtractor.getDoodleFromGoogle()
+    if len(doodleObject.get_doodle_contents()) > 0 :
+        VideoDoodle.createDoodleVideo(doodleObject)
+    file_write = open("LastSuccess.txt", "w") 
+    file_write.write(doodleObject.get_doodle_name())
+    file_write.close()
+    
+if __name__ == '__main__':
+    autoPlayDoodle()
+

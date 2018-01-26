@@ -61,18 +61,17 @@ def createDoodleVideo(doodleObject):
     screensize = (width,height)
     wordWidth=width-40
     wordHeight=height/6
-    input = raw_input("Shall I proceed ")
+    #input = raw_input("Shall I proceed ")
     print "creating video for "+doodleObject.get_doodle_title()
 
     #contentCollection=[]
-    statements=getContentForDoodle(doodleObject)
+    statements=doodleObject.get_doodle_contents()
     # If doodle content is present reduce main image to 10
     if len(statements) > 0:
         mainDoodleDuration = 10
     contentCollection=createDoodleVideoContent(doodleObject,mainDoodleDuration,statements)
   
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
-        print dooldleLang.get_doodle_query()
         if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1  and (dooldleLang.get_doodle_lang() == 'en'  or  dooldleLang.get_doodle_query() != doodleObject.get_doodle_eng_query()):  
             textCollection=[]    
             print dooldleLang.get_doodle_lang()+ " " +dooldleLang.get_doodle_hoverText()
@@ -105,36 +104,10 @@ def createDoodleVideo(doodleObject):
             videoDetails=populateVideoParameters(dooldleLang,doodleObject)
             #UploadDoodle.uploadToYoutube(videoDetails,dooldleLang,doodleObject)
 
-    
 
-def getContentForDoodle(doodleObject):
-    content_array=[]
-    final_content_array=[]
-    url='https://www.google.com/doodles/'+doodleObject.get_doodle_name()
-    print url
-    #response = urllib2.urlopen(url)
-    soup = BeautifulSoup(urllib2.urlopen(url), 'html.parser')
-    if soup is not None:
-         near_soup_tag= soup.find('li',attrs={'id':'blog-card','class':'doodle-card'})
-         near_soap_span=BeautifulSoup(""+str(near_soup_tag),'html.parser')
-         if near_soap_span is not None:
-             span_array=near_soap_span.find_all('span')
-             if len(span_array) > 0:
-                 string_aray =[]
-                 #Appending to plain text and back to list to avoid issues from portal
-                 for span in span_array:
-                     string_aray.append(span.text)
-                 string_plainText= "".join(string_aray)
-                 content_array=string_plainText.split(".")
-                 for content in content_array:
-                     if len(content) > 10:
-                         final_content_array.append(content)
-    return final_content_array
-
-    
 def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):
     textCollection=[] 
-    statements=getContentForDoodle(doodleObject)
+    #statements=getContentForDoodle(doodleObject)
     if len(statements) > 0:
         width=doodleObject.get_doodle_width()
         each_text_duration=6
@@ -142,7 +115,7 @@ def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):
         background_image_clip = VideoFileClip(background_image)
         for i in range(int(contentDuration/background_image_clip.duration)):
             textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+(i*background_image_clip.duration)).resize(1.2))
-        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-1).set_end(mainDoodleDuration+contentDuration).resize(1.2))
+        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-2).set_end(mainDoodleDuration+contentDuration).resize(1.2))
         start=mainDoodleDuration
         end=mainDoodleDuration+each_text_duration
         for statement in statements:

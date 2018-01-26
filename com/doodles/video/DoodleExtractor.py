@@ -2,6 +2,8 @@ from Doodle import Doodle
 from DoodleLang import DoodleLang
 import sys
 import requests
+import urllib2
+from bs4 import BeautifulSoup
 
 reload(sys)  # Reload does the trick!
 sys.setdefaultencoding('UTF8') 
@@ -39,6 +41,30 @@ def populateDoodleLangs(dooldleObject,dooleLangObjects, doodleJson):
                 dooldleObject.set_doodle_eng_query(translations[lang]['query'])
             dooleLangObjects.append(doodleLang)
 
+def getContentForDoodle(doodleObject):
+    content_array=[]
+    final_content_array=[]
+    url='https://www.google.com/doodles/'+doodleObject.get_doodle_name()
+    print url
+    #response = urllib2.urlopen(url)
+    soup = BeautifulSoup(urllib2.urlopen(url), 'html.parser')
+    if soup is not None:
+         near_soup_tag= soup.find('li',attrs={'id':'blog-card','class':'doodle-card'})
+         near_soap_span=BeautifulSoup(""+str(near_soup_tag),'html.parser')
+         if near_soap_span is not None:
+             span_array=near_soap_span.find_all('span')
+             if len(span_array) > 0:
+                 string_aray =[]
+                 #Appending to plain text and back to list to avoid issues from portal
+                 for span in span_array:
+                     string_aray.append(span.text)
+                 string_plainText= "".join(string_aray)
+                 content_array=string_plainText.split(".")
+                 for content in content_array:
+                     if len(content) > 10:
+                         final_content_array.append(content)
+    doodleObject.set_doodle_contents(final_content_array)
+
 def getDoodleFromGoogle():
     dooldleObject=Doodle()
     dooleLangObjects=[]
@@ -46,8 +72,9 @@ def getDoodleFromGoogle():
     PARAMS = {'hl':'en_GB'}
     request = requests.get(url = URL, params = PARAMS)
     data = request.json()
-    doodleJson=data[2]
+    doodleJson=data[0]
     populateDoodleHeaders(dooldleObject, doodleJson)
     populateDoodleLangs(dooldleObject,dooleLangObjects, doodleJson)
     dooldleObject.set_doodle_dooleLangs(dooleLangObjects)
+    getContentForDoodle(dooldleObject)
     return dooldleObject
