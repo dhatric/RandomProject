@@ -7,15 +7,19 @@ import sys
 from moviepy.editor import *
 import argparse
 import UploadDoodle
-
+import urllib2
+from bs4 import BeautifulSoup
 
 
 output_video_directory='../output/videos/'
 audio_background='../audios/Sleepy_Jake.mp3'
 background_image='../background.gif'
 
-
+#doodle main duration without  content
 mainDoodleDuration=20
+
+
+
 
 def populateVideoParameters(dooldleLang,doodleObject):
     videoDetails = argparse.Namespace()
@@ -31,22 +35,24 @@ def populateVideoParameters(dooldleLang,doodleObject):
     videoDetails.still_id=1
     return videoDetails
 
-
 def resize_func(t):
+    global mainDoodleDuration
     zoom=0
-    if t < 10:
-        zoom = 0.4 + 0.02*(mainDoodleDuration-t) # Zoom-out.
-    elif t >=10 and t<20 :
-        zoom = 0.4 + 0.02*t  # Zoom-IN
-    elif t >=20 and t<30 :
-        zoom = 0.4 + 0.02*(mainDoodleDuration-t) # Zoom-out.
-    elif t >=30 and t<=50 :
-        zoom = 0.4 + 0.02*t  # Zoom-IN    
-    #print "time is "+ str(t) + "zoom is" +str(zoom)  
+    if mainDoodleDuration == 20:
+        if t < 10:
+            zoom = 0.4 + 0.02*(mainDoodleDuration-t) # Zoom-out.
+        elif t >=10 and t<=20 :
+            zoom = 0.4 + 0.02*t  # Zoom-IN
+    if mainDoodleDuration == 10:  
+        if t < 5:
+            zoom = 0.4 + 0.04*(mainDoodleDuration-t) # Zoom-out.
+        elif t >= 5 and t < 10 :
+            zoom = 0.4 + 0.04*t  # Zoom-IN
     return  zoom 
 
+
 def createDoodleVideo(doodleObject):
-    
+    global mainDoodleDuration
     reload(sys)  # Reload does the trick!
     sys.setdefaultencoding('UTF8')
     width=doodleObject.get_doodle_width()
@@ -57,12 +63,17 @@ def createDoodleVideo(doodleObject):
     wordHeight=height/6
     input = raw_input("Shall I proceed ")
     print "creating video for "+doodleObject.get_doodle_title()
-    
-    contentCollection=[]
-    contentCollection=createDoodleVideoContent(doodleObject,mainDoodleDuration)
-    
+
+    #contentCollection=[]
+    statements=getContentForDoodle(doodleObject)
+    # If doodle content is present reduce main image to 10
+    if len(statements) > 0:
+        mainDoodleDuration = 10
+    contentCollection=createDoodleVideoContent(doodleObject,mainDoodleDuration,statements)
+  
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
-        if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1 and  dooldleLang.get_doodle_lang() == 'en':  
+        print dooldleLang.get_doodle_query()
+        if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1  and dooldleLang.get_doodle_lang() == 'en' :  
             textCollection=[]    
             print dooldleLang.get_doodle_hoverText()
             background_image_clip = VideoFileClip(background_image)
@@ -81,9 +92,10 @@ def createDoodleVideo(doodleObject):
             txt_word = TextClip(dooldleLang.get_doodle_hoverText(),color='black',font='Arial-Unicode-MS',method='label',size=(wordWidth,wordHeight),print_cmd=True)
             txt_word = txt_word.set_pos(('center',height-110)).set_duration(mainDoodleDuration)
             textCollection.append(txt_word)
+            totalvideoDuration=mainDoodleDuration
             if len(contentCollection) >0 :
                 textCollection.extend(contentCollection)
-            totalvideoDuration= contentCollection[-1].end
+                totalvideoDuration= contentCollection[-1].end
             video = CompositeVideoClip(textCollection,size=screensize,bg_color=(255,255,255))
             absoluteVideoFile=output_video_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".mp4"
             dooldleLang.set_doodle_videoLocation(absoluteVideoFile)
@@ -94,27 +106,48 @@ def createDoodleVideo(doodleObject):
             #UploadDoodle.uploadToYoutube(videoDetails,dooldleLang,doodleObject)
 
     
+
+def getContentForDoodle(doodleObject):
+    content_array=[]
+    url='https://www.google.com/doodles/'+doodleObject.get_doodle_name()
+    print url
+    #response = urllib2.urlopen(url)
+    soup = BeautifulSoup(urllib2.urlopen(url), 'html.parser')
+    if soup is not None:
+         near_soup_tag= soup.find('li',attrs={'id':'blog-card','class':'doodle-card'})
+         near_soap_span=BeautifulSoup(""+str(near_soup_tag),'html.parser')
+         if near_soap_span is not None:
+             span_array=near_soap_span.find_all('span')
+             if len(span_array) > 0:
+                 string_aray =[]
+                 #Appending to plain text and back to list to avoid issues from portal
+                 for span in span_array:
+                     string_aray.append(span.text)
+                 string_plainText= "".join(string_aray)
+                 content_array=string_plainText.split(".")
+                 print content_array
+    return content_array
+
     
-def createDoodleVideoContent(doodleObject,mainDoodleDuration):
-    statements=['Kuppali Venkatappa Puttappa (29 December 1904 – 11 November 1994),[2] popularly known by his pen name Kuvempu, was an Indian novelist, poet, playwright, critic and thinker']
-    statements.append('He is widely regarded as the greatest Kannada poet of the 20th century. He is the first among Kannada writers to be decorated with the prestigious Jnanpith Award.')
-    statements.append('Kuvempu studied at Mysore University in the 1920s, taught there for nearly three decades and served as its vice-chancellor from 1956 to 1960.')
-    width=doodleObject.get_doodle_width()
-    each_text_duration=6
-    contentDuration=len(statements)*each_text_duration
-    textCollection=[]  
-    background_image_clip = VideoFileClip(background_image)
-    for i in range(int(contentDuration/background_image_clip.duration)):
-        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+(i*background_image_clip.duration)).resize(1.2))
-    textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-1).set_end(mainDoodleDuration+contentDuration).resize(1.2))
-    start=mainDoodleDuration
-    end=mainDoodleDuration+each_text_duration
-    for statement in statements:
-            txt_usage_word = TextClip("<span size='40000' font='Calibri-Bold' foreground='black' >"+statement+"</span>",method='pango',size=(width-80,400))
-            txt_usage_word = txt_usage_word.set_pos(('center','center')).set_start(start).set_end(end)
-            start=start+each_text_duration
-            end=end+each_text_duration          
-            textCollection.append(txt_usage_word)
+def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):
+    textCollection=[] 
+    statements=getContentForDoodle(doodleObject)
+    if len(statements) > 0:
+        width=doodleObject.get_doodle_width()
+        each_text_duration=6
+        contentDuration=len(statements)*each_text_duration
+        background_image_clip = VideoFileClip(background_image)
+        for i in range(int(contentDuration/background_image_clip.duration)):
+            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+(i*background_image_clip.duration)).resize(1.2))
+        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-1).set_end(mainDoodleDuration+contentDuration).resize(1.2))
+        start=mainDoodleDuration
+        end=mainDoodleDuration+each_text_duration
+        for statement in statements:
+                txt_usage_word = TextClip("<span size='30000' font='Calibri-Bold' foreground='black' >"+statement+".</span>",method='pango',size=(width-80,400))
+                txt_usage_word = txt_usage_word.set_pos(('center','center')).set_start(start).set_end(end)
+                start=start+each_text_duration
+                end=end+each_text_duration          
+                textCollection.append(txt_usage_word)
     return textCollection  
     #video = CompositeVideoClip(textCollection,size=screensize,bg_color=(255,255,255))
     #video.write_videofile("hello.mp4",fps=24)             

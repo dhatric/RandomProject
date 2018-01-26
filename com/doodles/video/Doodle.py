@@ -51,4 +51,8 @@ class Doodle:
  def set_doodle_height(self,value):
      self.height=value     
      
-          
+ def get_doodle_contents(self):
+     return self.contents
+ 
+ def set_doodle_contents(self,value):
+     self.contents=value          
