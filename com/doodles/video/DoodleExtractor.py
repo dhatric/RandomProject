@@ -28,13 +28,15 @@ def populateDoodleHeaders(dooldleObject, doodleJson):
     dooldleObject.set_doodle_image_jpeg(absoluteJpegPath)
 
 
-def populateDoodleLangs(dooleLangObjects, doodleJson):
+def populateDoodleLangs(dooldleObject,dooleLangObjects, doodleJson):
     translations = doodleJson['translations']                            
     for lang in translations:
             doodleLang = DoodleLang()
             doodleLang.set_doodle_lang(lang)
             doodleLang.set_doodle_query(translations[lang]['query'])
             doodleLang.set_doodle_hoverText(translations[lang]['hover_text'])
+            if lang =='en':
+                dooldleObject.set_doodle_eng_query(translations[lang]['query'])
             dooleLangObjects.append(doodleLang)
 
 def getDoodleFromGoogle():
@@ -44,8 +46,8 @@ def getDoodleFromGoogle():
     PARAMS = {'hl':'en_GB'}
     request = requests.get(url = URL, params = PARAMS)
     data = request.json()
-    doodleJson=data[0]
+    doodleJson=data[2]
     populateDoodleHeaders(dooldleObject, doodleJson)
-    populateDoodleLangs(dooleLangObjects, doodleJson)
+    populateDoodleLangs(dooldleObject,dooleLangObjects, doodleJson)
     dooldleObject.set_doodle_dooleLangs(dooleLangObjects)
     return dooldleObject

@@ -73,9 +73,9 @@ def createDoodleVideo(doodleObject):
   
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
         print dooldleLang.get_doodle_query()
-        if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1  and dooldleLang.get_doodle_lang() == 'en' :  
+        if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1  and (dooldleLang.get_doodle_lang() == 'en'  or  dooldleLang.get_doodle_query() != doodleObject.get_doodle_eng_query()):  
             textCollection=[]    
-            print dooldleLang.get_doodle_hoverText()
+            print dooldleLang.get_doodle_lang()+ " " +dooldleLang.get_doodle_hoverText()
             background_image_clip = VideoFileClip(background_image)
             for i in range(int(mainDoodleDuration/background_image_clip.duration)):
                 textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration).resize(1.2))
@@ -109,6 +109,7 @@ def createDoodleVideo(doodleObject):
 
 def getContentForDoodle(doodleObject):
     content_array=[]
+    final_content_array=[]
     url='https://www.google.com/doodles/'+doodleObject.get_doodle_name()
     print url
     #response = urllib2.urlopen(url)
@@ -125,8 +126,10 @@ def getContentForDoodle(doodleObject):
                      string_aray.append(span.text)
                  string_plainText= "".join(string_aray)
                  content_array=string_plainText.split(".")
-                 print content_array
-    return content_array
+                 for content in content_array:
+                     if len(content) > 10:
+                         final_content_array.append(content)
+    return final_content_array
 
     
 def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):

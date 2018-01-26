@@ -56,3 +56,9 @@ class Doodle:
  
  def set_doodle_contents(self,value):
      self.contents=value          
+     
+ def get_doodle_eng_query(self):
+     return self.eng_query
+ 
+ def set_doodle_eng_query(self,value):
+     self.eng_query=value    
