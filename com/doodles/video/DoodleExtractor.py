@@ -52,7 +52,8 @@ def getContentForDoodle(doodleObject):
          near_soup_tag= soup.find('li',attrs={'id':'blog-card','class':'doodle-card'})
          near_soap_span=BeautifulSoup(""+str(near_soup_tag),'html.parser')
          if near_soap_span is not None:
-             span_array=near_soap_span.find_all('span')
+             span_array=near_soap_span.find_all('p')
+             print span_array
              if len(span_array) > 0:
                  string_aray =[]
                  #Appending to plain text and back to list to avoid issues from portal
@@ -61,18 +62,16 @@ def getContentForDoodle(doodleObject):
                  string_plainText= "".join(string_aray)
                  content_array=string_plainText.split(".")
                  for content in content_array:
-                     if len(content) > 10:
+                     if len(content) > 10 and len(content) < 250:
                          final_content_array.append(content)
+                 if len(final_content_array) > 1:        
+                     final_content_array.append("Like, Share and Subscribe to Diction Guru")  
+    #print final_content_array
     doodleObject.set_doodle_contents(final_content_array)
 
-def getDoodleFromGoogle():
+def getDoodleFromGoogle(doodleJson):
     dooldleObject=Doodle()
     dooleLangObjects=[]
-    URL='https://www.google.com/doodles/json/2018/1'
-    PARAMS = {'hl':'en_GB'}
-    request = requests.get(url = URL, params = PARAMS)
-    data = request.json()
-    doodleJson=data[0]
     populateDoodleHeaders(dooldleObject, doodleJson)
     populateDoodleLangs(dooldleObject,dooleLangObjects, doodleJson)
     dooldleObject.set_doodle_dooleLangs(dooleLangObjects)

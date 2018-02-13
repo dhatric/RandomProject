@@ -2,8 +2,8 @@ import DoodleExtractor
 import VideoDoodle
 
 
-def autoPlayDoodle():
-    doodleObject = DoodleExtractor.getDoodleFromGoogle()
+def autoPlayDoodle(doodleJson):
+    doodleObject = DoodleExtractor.getDoodleFromGoogle(doodleJson)
     if len(doodleObject.get_doodle_contents()) > 0 :
         VideoDoodle.createDoodleVideo(doodleObject)
     file_write = open("LastSuccess.txt", "w") 

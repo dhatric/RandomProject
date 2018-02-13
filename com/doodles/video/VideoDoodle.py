@@ -9,12 +9,12 @@ import argparse
 import UploadDoodle
 import urllib2
 from bs4 import BeautifulSoup
-
+import re
 
 output_video_directory='../output/videos/'
 audio_background='../audios/Sleepy_Jake.mp3'
 background_image='../background.gif'
-
+output_thumbnails_directory='../output/thumbnails/'
 #doodle main duration without  content
 mainDoodleDuration=20
 
@@ -24,10 +24,10 @@ mainDoodleDuration=20
 def populateVideoParameters(dooldleLang,doodleObject):
     videoDetails = argparse.Namespace()
     videoDetails.file=dooldleLang.get_doodle_videoLocation()
-    videoDetails.title=dooldleLang.get_doodle_query()+ " Google Doodle"
-    videoDetails.description="Google Doodle :\n"+ dooldleLang.get_doodle_hoverText()+"\n" +dooldleLang.get_doodle_query() +"\n" +doodleObject.get_doodle_title()+"\n" +doodleObject.get_doodle_name()
-    videoDetails.category="27"
-    keywords=[doodleObject.get_doodle_title(),doodleObject.get_doodle_name(),dooldleLang.get_doodle_query(),dooldleLang.get_doodle_hoverText()]
+    videoDetails.title=dooldleLang.get_doodle_query()+ " | "+dooldleLang.get_doodle_hoverText()
+    videoDetails.description="Google Doodle :\n"+ dooldleLang.get_doodle_hoverText()+"\n" +dooldleLang.get_doodle_query() +"\n" +doodleObject.get_doodle_title()+"\n" +doodleObject.get_doodle_name()+"\n" +dooldleLang.get_doodle_query()+"\n"+ dooldleLang.get_doodle_hoverText()+"\n\n" +".\n".join(doodleObject.get_doodle_contents())+"\n www.dictionguru.com"
+    videoDetails.category="22"
+    keywords=[doodleObject.get_doodle_title(),doodleObject.get_doodle_name(),dooldleLang.get_doodle_query(),dooldleLang.get_doodle_hoverText(),doodleObject.get_doodle_query()]
     videoDetails.keywords=",".join(keywords)
     videoDetails.privacyStatus="public"
     videoDetails.logging_level="WARNING"
@@ -77,7 +77,7 @@ def createDoodleVideo(doodleObject):
             print dooldleLang.get_doodle_lang()+ " " +dooldleLang.get_doodle_hoverText()
             background_image_clip = VideoFileClip(background_image)
             for i in range(int(mainDoodleDuration/background_image_clip.duration)):
-                textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration).resize(1.2))
+                textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration).set_duration(background_image_clip.duration).resize(1.2))
             textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration-1).resize(1.2))    
             txt_word_header = TextClip("Google Doodle Celebrates",color='black',font='arial',method='label',size=(wordWidth,50))
             txt_word_header = txt_word_header.set_pos(('center',60)).set_duration(mainDoodleDuration)
@@ -100,9 +100,13 @@ def createDoodleVideo(doodleObject):
             dooldleLang.set_doodle_videoLocation(absoluteVideoFile)
             audio_backgroundClip=AudioFileClip(audio_background)
             video=video.set_audio(audio_backgroundClip.set_duration(totalvideoDuration))
+            video.save_frame(output_thumbnails_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".jpeg", 2, False)
             video.write_videofile(absoluteVideoFile,fps=24)
             videoDetails=populateVideoParameters(dooldleLang,doodleObject)
-            #UploadDoodle.uploadToYoutube(videoDetails,dooldleLang,doodleObject)
+            UploadDoodle.uploadToYoutube(videoDetails,dooldleLang,doodleObject)
+            file_write = open("LastSuccess.txt", "w")
+            file_write.write(doodleObject.get_doodle_name())
+            file_write.close()
 
 
 def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):
@@ -114,12 +118,14 @@ def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):
         contentDuration=len(statements)*each_text_duration
         background_image_clip = VideoFileClip(background_image)
         for i in range(int(contentDuration/background_image_clip.duration)):
-            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+(i*background_image_clip.duration)).resize(1.2))
+            start_time=mainDoodleDuration+(i*background_image_clip.duration)
+            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(start_time).set_duration(background_image_clip.duration).resize(1.2))
         textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-2).set_end(mainDoodleDuration+contentDuration).resize(1.2))
         start=mainDoodleDuration
         end=mainDoodleDuration+each_text_duration
         for statement in statements:
-                txt_usage_word = TextClip("<span size='30000' font='Calibri-Bold' foreground='black' >"+statement+".</span>",method='pango',size=(width-80,400))
+                print statement+"\n\n\n\n"
+                txt_usage_word = TextClip("<span size='30000' font='Calibri-Bold' foreground='black' >"+re.sub('[<>&;-]+',' ',statement)+".</span>",method='pango',size=(width-80,400))
                 txt_usage_word = txt_usage_word.set_pos(('center','center')).set_start(start).set_end(end)
                 start=start+each_text_duration
                 end=end+each_text_duration          

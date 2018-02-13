@@ -19,6 +19,7 @@ from DoodleLang import DoodleLang
 
 output_video_directory='../output/video/'
 output_images_directory='../output/images/'
+output_thumbnails_directory='../output/thumbnails/'
 
 httplib2.RETRIES = 1
 
@@ -141,7 +142,7 @@ def uploadToYoutube(videoDetails,dooldleLang,doodleObject):
   youtube = get_authenticated_service(videoDetails)
   try:
     videoId=video_upload(youtube, videoDetails)
-    #thumbnails_upload(youtube,doodleObject.get_doodle_image_jpeg(),videoId=videoId)
+    thumbnails_upload(youtube,output_thumbnails_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".jpeg",videoId=videoId)
   except HttpError, e:
     print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
     if e.resp.status == 400:

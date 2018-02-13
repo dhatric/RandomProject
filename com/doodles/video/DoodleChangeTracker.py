@@ -6,6 +6,7 @@ import requests
 import smtplib
 import hashlib
 import Main
+import os
 
 previos_query=u"Virginia Woolf’s 136th birthday"
 GMAIL_USERNAME='vignanstudent@gmail.com'
@@ -26,10 +27,13 @@ def SendMail(str):
 
 
 if __name__ == '__main__':
-    URL='https://www.google.com/doodles/json/2018/1'
+    print 'checking'
+    #os.chdir('C:\\Giridhar\\Projects\\python\\Doodles\\RandomProject\\com\\doodles\\video')
+    URL='https://www.google.com/doodles/json/2018/2'
     PARAMS = {'hl':'en_GB'}
     request = requests.get(url = URL, params = PARAMS)
     data = request.json()
+    doodleJson = None
     doodleJson=data[0]
     file_read = open("LastSuccess.txt", "r") 
     file_content = hashlib.md5(file_read.read()).hexdigest()
@@ -38,6 +42,6 @@ if __name__ == '__main__':
     if doole_content != file_content:
         print "change found"
         SendMail(doodleJson['name'])
-        Main.autoPlayDoodle()
+        Main.autoPlayDoodle(doodleJson)
         
         
