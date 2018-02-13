@@ -77,8 +77,8 @@ def createDoodleVideo(doodleObject):
             print dooldleLang.get_doodle_lang()+ " " +dooldleLang.get_doodle_hoverText()
             background_image_clip = VideoFileClip(background_image)
             for i in range(int(mainDoodleDuration/background_image_clip.duration)):
-                textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(i*background_image_clip.duration).set_duration(background_image_clip.duration).resize(1.2))
-            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration-1).resize(1.2))    
+                textCollection.append(VideoFileClip(background_image).set_pos(('center',10)).set_start(i*background_image_clip.duration).set_duration(background_image_clip.duration).resize(1))
+            textCollection.append(VideoFileClip(background_image).set_pos(('center',10)).set_start(mainDoodleDuration-1).resize(1))    
             txt_word_header = TextClip("Google Doodle Celebrates",color='black',font='arial',method='label',size=(wordWidth,50))
             txt_word_header = txt_word_header.set_pos(('center',60)).set_duration(mainDoodleDuration)
             textCollection.append(txt_word_header)
@@ -119,8 +119,11 @@ def createDoodleVideoContent(doodleObject,mainDoodleDuration,statements):
         background_image_clip = VideoFileClip(background_image)
         for i in range(int(contentDuration/background_image_clip.duration)):
             start_time=mainDoodleDuration+(i*background_image_clip.duration)
-            textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(start_time).set_duration(background_image_clip.duration).resize(1.2))
-        textCollection.append(VideoFileClip(background_image).set_pos(('center',80)).set_start(mainDoodleDuration+contentDuration-2).set_end(mainDoodleDuration+contentDuration).resize(1.2))
+            textCollection.append(VideoFileClip(background_image).set_pos(('center',10)).set_start(start_time).set_duration(background_image_clip.duration).resize(1))
+        textCollection.append(VideoFileClip(background_image).set_pos(('center',10)).set_start(mainDoodleDuration+contentDuration-2).set_end(mainDoodleDuration+contentDuration).resize(1))
+        txt_title_word = TextClip("<span size='35000' font='Calibri-Bold' foreground='black' >"+re.sub('[<>&;-]+',' ',doodleObject.get_doodle_title())+"</span>",method='pango',size=(width-80,400))
+        txt_title_word = txt_title_word.set_pos(('center',40)).set_start(mainDoodleDuration).set_end(mainDoodleDuration+contentDuration) 
+        textCollection.append(txt_title_word)
         start=mainDoodleDuration
         end=mainDoodleDuration+each_text_duration
         for statement in statements:
