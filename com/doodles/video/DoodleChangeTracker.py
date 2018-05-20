@@ -29,7 +29,7 @@ def SendMail(str):
 if __name__ == '__main__':
     print 'checking'
     #os.chdir('C:\\Giridhar\\Projects\\python\\Doodles\\RandomProject\\com\\doodles\\video')
-    URL='https://www.google.com/doodles/json/2018/2'
+    URL='https://www.google.com/doodles/json/2018/5'
     PARAMS = {'hl':'en_GB'}
     request = requests.get(url = URL, params = PARAMS)
     data = request.json()

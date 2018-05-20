@@ -61,4 +61,11 @@ class Doodle:
      return self.eng_query
  
  def set_doodle_eng_query(self,value):
-     self.eng_query=value    
+     self.eng_query=value  
+     
+     
+ def get_doodle_videoID(self):
+     return self.videoID         
+
+ def set_doodle_videoID(self,value):
+     self.videoID =value        

@@ -10,6 +10,7 @@ import UploadDoodle
 import urllib2
 from bs4 import BeautifulSoup
 import re
+import DoodleLikesComments
 
 output_video_directory='../output/videos/'
 audio_background='../audios/Sleepy_Jake.mp3'
@@ -72,7 +73,7 @@ def createDoodleVideo(doodleObject):
     contentCollection=createDoodleVideoContent(doodleObject,mainDoodleDuration,statements)
   
     for dooldleLang in doodleObject.get_doodle_dooleLangs():
-        if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1  and (dooldleLang.get_doodle_lang() == 'en'  or  dooldleLang.get_doodle_query() != doodleObject.get_doodle_eng_query()):  
+        if dooldleLang.get_doodle_hoverText() is not None and len(dooldleLang.get_doodle_hoverText()) > 1  and (dooldleLang.get_doodle_lang() == 'en'  or  dooldleLang.get_doodle_query() != doodleObject.get_doodle_eng_query()) :  
             textCollection=[]    
             print dooldleLang.get_doodle_lang()+ " " +dooldleLang.get_doodle_hoverText()
             background_image_clip = VideoFileClip(background_image)
@@ -104,6 +105,8 @@ def createDoodleVideo(doodleObject):
             video.write_videofile(absoluteVideoFile,fps=24)
             videoDetails=populateVideoParameters(dooldleLang,doodleObject)
             UploadDoodle.uploadToYoutube(videoDetails,dooldleLang,doodleObject)
+            print doodleObject.get_doodle_videoID()
+            DoodleLikesComments.generateLikesComments(dooldleLang, doodleObject)
             file_write = open("LastSuccess.txt", "w")
             file_write.write(doodleObject.get_doodle_name())
             file_write.close()

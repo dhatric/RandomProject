@@ -20,6 +20,7 @@ from DoodleLang import DoodleLang
 output_video_directory='../output/video/'
 output_images_directory='../output/images/'
 output_thumbnails_directory='../output/thumbnails/'
+client_secret_directory='../client_secrets/'
 
 httplib2.RETRIES = 1
 
@@ -36,7 +37,7 @@ RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, httplib.NotConnected,
 # codes is raised.
 RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 
-CLIENT_SECRETS_FILE = "client_secrets.json"
+CLIENT_SECRETS_FILE = client_secret_directory+"client_secrets.json"
 
 YOUTUBE_READ_WRITE_SSL_SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl"
 API_SERVICE_NAME = "youtube"
@@ -53,7 +54,7 @@ def get_authenticated_service(args):
   flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE, scope=YOUTUBE_READ_WRITE_SSL_SCOPE,
     message=MISSING_CLIENT_SECRETS_MESSAGE)
 
-  storage = Storage("youtube-api-snippets-oauth2.json")
+  storage = Storage(client_secret_directory+"youtube-api-snippets-oauth2.json")
   credentials = storage.get()
 
   if credentials is None or credentials.invalid:
@@ -142,6 +143,7 @@ def uploadToYoutube(videoDetails,dooldleLang,doodleObject):
   youtube = get_authenticated_service(videoDetails)
   try:
     videoId=video_upload(youtube, videoDetails)
+    doodleObject.set_doodle_videoID(videoId)
     thumbnails_upload(youtube,output_thumbnails_directory+doodleObject.get_doodle_name()[:20]+"_"+dooldleLang.get_doodle_lang()+".jpeg",videoId=videoId)
   except HttpError, e:
     print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
