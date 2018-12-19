@@ -10,7 +10,7 @@ import os
 
 previos_query=u"Virginia Woolf’s 136th birthday"
 GMAIL_USERNAME='vignanstudent@gmail.com'
-GMAIL_PASSWORD='07Dell590'
+GMAIL_PASSWORD='compramized'
 TO = 'dhatric@gmail.com'
 
 
