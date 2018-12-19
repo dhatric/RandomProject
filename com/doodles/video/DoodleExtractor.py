@@ -17,12 +17,12 @@ def populateDoodleHeaders(dooldleObject, doodleJson):
     dooldleObject.set_doodle_title(doodleJson['title'])
     dooldleObject.set_doodle_name(doodleJson['name'])
     dooldleObject.set_doodle_query(doodleJson['query'])
-    dooldleObject.set_doodle_width(doodleJson['hires_width'])
-    dooldleObject.set_doodle_height(doodleJson['hires_height'])
-    absoluteJpegPath=output_image_directory+doodleJson['name']+doodleJson['hires_url'][-4:]
+    dooldleObject.set_doodle_width(doodleJson['high_res_width'])
+    dooldleObject.set_doodle_height(doodleJson['high_res_height'])
+    absoluteJpegPath=output_image_directory+doodleJson['name']+doodleJson['high_res_url'][-4:]
     absolutePngPath=output_image_directory+doodleJson['name']+doodleJson['url'][-4:]
-    print "https://"+doodleJson['hires_url'][2:]
-    requestJpeg = requests.get("https://"+doodleJson['hires_url'][2:])
+    print "https://"+doodleJson['high_res_url'][2:]
+    requestJpeg = requests.get("https://"+doodleJson['high_res_url'][2:])
     if requestJpeg.status_code == 200:
         with open(absoluteJpegPath, 'wb') as f:
             for chunk in requestJpeg:
